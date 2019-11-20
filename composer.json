@@ -1,0 +1,24 @@
+{
+    "name": "bricksasp/spu",
+    "description": "bricksasp spu模块",
+    "keywords": ["yii2", "spu"],
+    "type": "yii2-extension",
+    "support": {
+        "issues": "https://github.com/bricksasp/spu/issues",
+        "source": "https://github.com/bricksasp/spu"
+    },
+    "authors": [
+        {
+            "name": "bricksasp",
+            "email": "649909457@qq.com"
+        }
+    ],
+    "require": {
+        "bricksasp/base": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "bricksasp\\spu\\": ""
+        }
+    }
+}
