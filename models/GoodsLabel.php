@@ -14,7 +14,7 @@ class GoodsLabel extends \bricksasp\base\BaseActiveRecord
      */
     public static function tableName()
     {
-        return 'bricksasp_goods_label';
+        return '{{%goods_label}}';
     }
 
     /**
