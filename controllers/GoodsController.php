@@ -50,7 +50,7 @@ class GoodsController extends BaseController
     }
 
     /**
-     * @OA\Get(path="/goods/index",
+     * @OA\Get(path="/spu/goods/index",
      *   summary="商品列表",
      *   tags={"spu模块"},
      *   @OA\Parameter(
@@ -148,7 +148,7 @@ class GoodsController extends BaseController
 
 
     /**
-     * @OA\Get(path="/goods/detail",
+     * @OA\Get(path="/spu/goods/detail",
      *   summary="商品详情",
      *   tags={"spu模块"},
      *   @OA\Parameter(

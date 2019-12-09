@@ -56,7 +56,7 @@ class CategoryController extends BaseController
 
     /**
      * 获取分类树
-     * @OA\Get(path="/category/tree",
+     * @OA\Get(path="/spu/category/tree",
      *   summary="商品分类",
      *   tags={"spu模块"},
      *   @OA\Parameter(
