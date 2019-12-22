@@ -13,6 +13,7 @@ use yii\web\HttpException;
 use yii\filters\VerbFilter;
 use bricksasp\helpers\Tools;
 use bricksasp\base\Config;
+use bricksasp\spu\models\FormValidate;
 
 /**
  * GoodsController implements the CRUD actions for Goods model.
@@ -32,7 +33,7 @@ class GoodsController extends BaseController
             'update',
             'delete',
             'view',
-            'spec'
+            'comment'
         ];
     }
 
@@ -282,6 +283,86 @@ class GoodsController extends BaseController
             ->batchInsert(GoodsLabel::tableName(),['goods_id','lable_id','sort'],$inster)
             ->execute();
         return $this->success($a);
+    }
+
+    /**
+     * 商品评论
+     * 
+     * @OA\Post(path="/spu/goods/comment",
+     *   summary="用户评论",
+     *   tags={"spu模块"},
+     *   @OA\Parameter(
+     *     description="用户请求token",
+     *     name="X-Token",
+     *     in="header",
+     *     required=true,
+     *     @OA\Schema(
+     *       type="string"
+     *     )
+     *   ),
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(
+     *           description="订单id",
+     *           property="order_id",
+     *           type="integer",
+     *           example=1111111990393939
+     *         ),
+     *         @OA\Property(
+     *           description="单品id",
+     *           property="product_id",
+     *           type="integer",
+     *           example=1
+     *         ),
+     *         @OA\Property(
+     *           description="内容",
+     *           property="content",
+     *           type="string",
+     *           example="内容"
+     *         ),
+     *         @OA\Property(
+     *           description="图片id",
+     *           property="image_ids",
+     *           type="array", @OA\Items(
+     *             @OA\Property(
+     *               description="图片ids",
+     *               property="id",
+     *               type="integer"
+     *             ),
+     *             example=1111111990393939,
+     *           )
+     *         ),
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="响应结构",
+     *     @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(ref="#/components/schemas/response"),
+     *     ),
+     *   ),
+     * )
+     * 
+     * @return array
+     */
+    public function actionComment()
+    {
+        $parmas = Yii::$app->request->post();
+
+        $validator = new FormValidate($parmas, ['scenario' => 'create_goods_comment']);
+        if ($validator->validate()) {
+            // $parmas['owner_id'] = 
+
+            return $this->success(/*$model*/)/* : $this->fail($model->errors)*/;
+        }
+
+        return $this->fail($validator->errors);
+
     }
 
     /**

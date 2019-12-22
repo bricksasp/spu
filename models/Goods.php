@@ -289,6 +289,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
         $productItems = $data['productItems'];
         $imageItems = $data['imageItems'];
         $videoItem = $data['videoItem'];
+        $data['cat_id'] = end($data['cat_id']);
         unset($data['productItems'], $data['imageItems'], $data['videoItem']);
 
         if ($data['is_on_shelves'] == 1 && $this->is_on_shelves != 1) {
