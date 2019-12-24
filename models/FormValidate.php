@@ -15,10 +15,10 @@ class FormValidate extends \bricksasp\base\FormValidate
     public function rules()
     {
         return [
-            [['order_id' ], 'integer'],
+            [['order_id', 'goods_id'], 'integer'],
             [['content' ], 'string'],
-            [['image_ids', 'content', 'order_id'], 'required', 'on' => ['create_goods_comment']],
-            [['image_ids'], 'checkimgs']
+            [['image_ids'], 'checkimgs'],
+            [['goods_id', 'content', 'order_id'], 'required', 'on' => ['create_goods_comment']],
         ];
     }
 
@@ -28,13 +28,13 @@ class FormValidate extends \bricksasp\base\FormValidate
     public function scenarios()
     {
         return [
-            self::CREATE_GOODS_COMMENT => ['cart', 'products', 'ship_id'],
+            self::CREATE_GOODS_COMMENT => ['image_ids', 'content', 'order_id', 'goods_id'],
         ];
     }
 
     public function checkimgs()
     {
-        if(is_array($this->image_ids)){
+        if(!is_array($this->image_ids)){
             $this->addError('image_ids', 'image_ids 必须为数组');
         }
     }

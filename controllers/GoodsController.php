@@ -14,6 +14,7 @@ use yii\filters\VerbFilter;
 use bricksasp\helpers\Tools;
 use bricksasp\base\Config;
 use bricksasp\spu\models\FormValidate;
+use bricksasp\spu\models\GoodsComment;
 
 /**
  * GoodsController implements the CRUD actions for Goods model.
@@ -33,7 +34,7 @@ class GoodsController extends BaseController
             'update',
             'delete',
             'view',
-            'comment'
+            'user-comment'
         ];
     }
 
@@ -47,6 +48,7 @@ class GoodsController extends BaseController
             'index',
             'detail',
             'view',
+            'comment',
         ];
     }
 
@@ -146,7 +148,6 @@ class GoodsController extends BaseController
 
         return $this->success($goods);
     }
-
 
     /**
      * @OA\Get(path="/spu/goods/detail",
@@ -256,10 +257,8 @@ class GoodsController extends BaseController
     }
 
     /**
-     * Deletes an existing Goods model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * 获取规格
      * @return mixed
-     * @throws HttpException if the model cannot be found
      */
     public function actionSpec()
     {
@@ -267,6 +266,10 @@ class GoodsController extends BaseController
         return $this->success($spec_product);
     }
 
+    /**
+     * 设置商品标签
+     * @return mixed 
+     */
     public function actionSetlabel()
     {
         $goods_id = Yii::$app->request->get('id');
@@ -288,7 +291,7 @@ class GoodsController extends BaseController
     /**
      * 商品评论
      * 
-     * @OA\Post(path="/spu/goods/comment",
+     * @OA\Post(path="/spu/goods/user-comment",
      *   summary="用户评论",
      *   tags={"spu模块"},
      *   @OA\Parameter(
@@ -312,8 +315,8 @@ class GoodsController extends BaseController
      *           example=1111111990393939
      *         ),
      *         @OA\Property(
-     *           description="单品id",
-     *           property="product_id",
+     *           description="商品id",
+     *           property="goods_id",
      *           type="integer",
      *           example=1
      *         ),
@@ -322,6 +325,12 @@ class GoodsController extends BaseController
      *           property="content",
      *           type="string",
      *           example="内容"
+     *         ),
+     *         @OA\Property(
+     *           description="评价1-5星",
+     *           property="score",
+     *           type="integer",
+     *           example=5
      *         ),
      *         @OA\Property(
      *           description="图片id",
@@ -350,19 +359,70 @@ class GoodsController extends BaseController
      * 
      * @return array
      */
-    public function actionComment()
+    public function actionUserComment()
     {
-        $parmas = Yii::$app->request->post();
+        $params = $this->queryFilters(false);
 
-        $validator = new FormValidate($parmas, ['scenario' => 'create_goods_comment']);
+        $validator = new FormValidate($params, ['scenario' => 'create_goods_comment']);
         if ($validator->validate()) {
-            // $parmas['owner_id'] = 
+            $model = new GoodsComment();
+            $model->saveData($params);
 
-            return $this->success(/*$model*/)/* : $this->fail($model->errors)*/;
+            return $model->saveData($params) ? $this->success($model) : $this->fail($model->errors);
         }
 
         return $this->fail($validator->errors);
+    }
 
+
+    /**
+     * 商品评论列表
+     * @OA\Get(path="/spu/goods/comment",
+     *   summary="商品评论列表",
+     *   tags={"spu模块"},
+     *   @OA\Parameter(
+     *     description="商品id",
+     *     name="id",
+     *     in="query",
+     *     required=true,
+     *     @OA\Schema(
+     *       type="integer"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="响应结构",
+     *     @OA\MediaType(
+     *         mediaType="application/json",
+     *         @OA\Schema(ref="#/components/schemas/goodsCommentList"),
+     *     ),
+     *   ),
+     * )
+     * 
+     * @OA\Schema(
+     *  schema="goodsCommentList",
+     *  description="商品评论列表结构",
+     *  @OA\Property(property="score", type="integer", description="评价1-5星"),
+     *  @OA\Property( property="content", type="string", description="评价内容"),
+     *  @OA\Property( property="seller_content", type="string", description="商家回复" ),
+     *  @OA\Property( property="created_at", type="integer", description="评价时间" ),
+     *  @OA\Property( property="user_id", type="string", description="评价用户ID" ),
+     * )
+     */
+    public function actionComment()
+    {
+        $goods_id = Yii::$app->request->get('id');
+        // echo "string";exit();
+        $model = GoodsComment::find()->with(['imageItems'])->where(['goods_id' => $goods_id])->all();
+        $data = [];
+        foreach ($model as $item) {
+            // print_r($item->imageItems);exit();
+            $row = $item->toArray();
+            $row['imageItems'] = Tools::format_array($item->imageItems, ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']], 2);
+            $data[] = $row;
+        }
+
+        return $this->success($data);
     }
 
     /**
