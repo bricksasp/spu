@@ -78,7 +78,7 @@ class GoodsComment extends \bricksasp\base\BaseActiveRecord
 
     public function getImageItems()
     {
-        return $this->hasMany(File::className(), ['id' => 'image_id'])->via('imageRelation')->select(['id', 'file_url', 'name', 'ext']);
+        return $this->hasMany(File::className(), ['id' => 'image_id'])->via('imageRelation')->select(['id', 'file_url', 'ext'])->asArray();
     }
 
     /**

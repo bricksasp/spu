@@ -154,7 +154,7 @@ class GoodsController extends BaseController
      *   summary="商品详情",
      *   tags={"spu模块"},
      *   @OA\Parameter(
-     *     description="用户请求token,登录后填写",
+     *     description="登录凭证",
      *     name="X-Token",
      *     in="header",
      *     required=false,
@@ -295,7 +295,7 @@ class GoodsController extends BaseController
      *   summary="用户评论",
      *   tags={"spu模块"},
      *   @OA\Parameter(
-     *     description="用户请求token",
+     *     description="登录凭证",
      *     name="X-Token",
      *     in="header",
      *     required=true,
@@ -412,14 +412,24 @@ class GoodsController extends BaseController
     public function actionComment()
     {
         $goods_id = Yii::$app->request->get('id');
-        // echo "string";exit();
         $model = GoodsComment::find()->with(['imageItems'])->where(['goods_id' => $goods_id])->all();
         $data = [];
         foreach ($model as $item) {
-            // print_r($item->imageItems);exit();
-            $row = $item->toArray();
-            $row['imageItems'] = Tools::format_array($item->imageItems, ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']], 2);
-            $data[] = $row;
+            $rela = $item->relatedRecords;
+            $imageItems = Tools::format_array($rela['imageItems'], ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']], 2);
+
+            $imgs = array_column($imageItems, 'id');
+            $sort = array_column($rela['imageRelation'], 'sort', 'image_id');
+            $k = [];
+
+            foreach ($imgs as $v) {
+                $k[] = $sort[$v];
+            }
+            $imageItems = array_combine($k, $imageItems);
+            ksort($imageItems);
+            $rela['imageItems'] = array_values($imageItems);
+
+            $data[] = array_merge($item->toArray(),$rela);
         }
 
         return $this->success($data);
