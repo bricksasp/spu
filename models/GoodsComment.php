@@ -7,6 +7,7 @@ use bricksasp\order\models\Order;
 use bricksasp\order\models\OrderItem;
 use bricksasp\helpers\Tools;
 use bricksasp\base\models\File;
+use bricksasp\member\models\UserWx;
 
 /**
  * This is the model class for table "{{%goods_comment}}".
@@ -79,6 +80,11 @@ class GoodsComment extends \bricksasp\base\BaseActiveRecord
     public function getImageItems()
     {
         return $this->hasMany(File::className(), ['id' => 'image_id'])->via('imageRelation')->select(['id', 'file_url', 'ext'])->asArray();
+    }
+
+    public function getUserInfo()
+    {
+        return $this->hasOne(UserWx::className(), ['user_id' => 'user_id'])->select(['user_id', 'avatar', 'nickname'])->asArray();
     }
 
     /**

@@ -412,7 +412,7 @@ class GoodsController extends BaseController
     public function actionComment()
     {
         $goods_id = Yii::$app->request->get('id');
-        $model = GoodsComment::find()->with(['imageItems'])->where(['goods_id' => $goods_id])->all();
+        $model = GoodsComment::find()->with(['imageItems', 'userInfo'])->where(['goods_id' => $goods_id])->all();
         $data = [];
         foreach ($model as $item) {
             $rela = $item->relatedRecords;
