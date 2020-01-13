@@ -42,9 +42,6 @@ class GoodsSearch extends Goods
      */
     public function search($params=[])
     {
-        $map['status'] = 1;
-        $params = array_merge($params, $map);
-
         $query = Goods::find()/*->select(['id','name','gn'])*/->with(['coverItem','labelItems']);
 
         // add conditions that should always apply here

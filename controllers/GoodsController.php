@@ -15,6 +15,7 @@ use bricksasp\helpers\Tools;
 use bricksasp\base\Config;
 use bricksasp\spu\models\FormValidate;
 use bricksasp\spu\models\GoodsComment;
+use bricksasp\rbac\models\redis\Token;
 
 /**
  * GoodsController implements the CRUD actions for Goods model.
@@ -109,7 +110,11 @@ class GoodsController extends BaseController
     public function actionIndex()
     {
         $searchModel = new GoodsSearch();
-        $dataProvider = $searchModel->search($this->queryFilters());
+        $params = $this->queryFilters();
+        if ($this->request_entrance !== Token::TOKEN_TYPE_BACKEND) {
+            $params['status'] = 1;
+        }
+        $dataProvider = $searchModel->search($params);
         return $this->pageFormat($dataProvider,['labelItems'=>false,'labels'=>false, 'coverItem'=>[
             ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']]
         ]]);
