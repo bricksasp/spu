@@ -111,10 +111,12 @@ class GoodsController extends BaseController
     {
         $searchModel = new GoodsSearch();
         $params = $this->queryFilters();
+        $field = [];
         if ($this->request_entrance !== Token::TOKEN_TYPE_BACKEND) {
             $params['status'] = 1;
+            $field = ['id', 'name', 'brief', 'image_id', 'video', 'price', 'costprice', 'mktprice'];
         }
-        $dataProvider = $searchModel->search($params);
+        $dataProvider = $searchModel->search($params, $field);
         return $this->pageFormat($dataProvider,['labelItems'=>false,'labels'=>false, 'coverItem'=>[
             ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']]
         ]]);

@@ -431,6 +431,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
         $imageItems = array_combine($k, $imageItems);
         ksort($imageItems);
         $data['imageItems'] = array_values($imageItems);
+        $data['content'] = str_replace('src="file', 'src="' . Config::instance()->web_url . 'file', $data['content']);
         return $data;
     }
 

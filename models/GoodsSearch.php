@@ -40,9 +40,9 @@ class GoodsSearch extends Goods
      *
      * @return ActiveDataProvider
      */
-    public function search($params=[])
+    public function search($params=[], $field=[])
     {
-        $query = Goods::find()/*->select(['id','name','gn'])*/->with(['coverItem','labelItems']);
+        $query = Goods::find()->select($field)->with(['coverItem','labelItems']);
 
         // add conditions that should always apply here
 
