@@ -372,7 +372,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
     /**
      * 商品详情
      * @OA\Schema(
-     *  schema="goodsDetal",
+     *  schema="goodsDetail",
      *  description="商品详情结构",
      *  @OA\Property( property="name", type="string", description="商品名称"),
      *  @OA\Property( property="brief", type="string", description="商品简介" ),
@@ -382,6 +382,9 @@ class Goods extends \bricksasp\base\BaseActiveRecord
      *  @OA\Property( property="stock_unit", type="integer", description="库存单位" ),
      *  @OA\Property( property="weight_unit", type="integer", description="重量单位" ),
      *  @OA\Property( property="volume_unit", type="integer", description="体积单位" ),
+     *  @OA\Property( property="price", type="string", description="售价"),
+     *  @OA\Property( property="costprice", type="string", description="成本价" ),
+     *  @OA\Property( property="mktprice", type="string", description="原价" ),
      *  @OA\Property( property="imageItems", type="array", description="商品图片", @OA\Items(ref="#/components/schemas/file")),
      *  @OA\Property( property="labelItems", type="array", description="商品标签", @OA\Items(ref="#/components/schemas/label")),
      *  @OA\Property( property="brandItem", description="品牌", ref="#/components/schemas/brand"),
@@ -391,7 +394,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
      *  @OA\Property( property="specs", description="商品 属性名称-值", ref="#/components/schemas/specs"),
      * )
      */
-    public static function goodsDetal($goods_id,$product_id=0)
+    public static function goodsDetail($goods_id,$product_id=0, $all=2)
     {
         $goods = Goods::find()
             ->with(['productItems', 'labelItems', 'brandItem', 'imageItems', 'videoItem'])
@@ -432,6 +435,9 @@ class Goods extends \bricksasp\base\BaseActiveRecord
         ksort($imageItems);
         $data['imageItems'] = array_values($imageItems);
         $data['content'] = str_replace('src="file', 'src="' . Config::instance()->web_url . 'file', $data['content']);
+        if ($all == 1) {
+            $data['product_list'] = Product::find()->select(['id', 'price', 'mktprice'])->where(['goods_id' => $goods_id])->all();
+        }
         return $data;
     }
 

@@ -87,7 +87,7 @@ class TypeController extends BaseController
         $data = Yii::$app->request->post();
         if ($model->load($data,'') && $model->save()) {
             $this->setSpec($model->id,$data['specs']);
-            $this->setParams($model->id,$data['params']);
+            $this->setParams($model->id,$data['params'] ?? []);
             return $this->success();
         }
 
@@ -108,7 +108,7 @@ class TypeController extends BaseController
         $data = Yii::$app->request->post();
         if ($model->load($data,'') && $model->save()) {
             $this->setSpec($model->id,$data['specs']);
-            $this->setParams($model->id,$data['params']);
+            $this->setParams($model->id,$data['params'] ?? []);
             return $this->success();
         }
 

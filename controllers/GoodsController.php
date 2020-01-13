@@ -178,19 +178,36 @@ class GoodsController extends BaseController
      *       type="integer"
      *     )
      *   ),
+     *   @OA\Parameter(
+     *     description="单品id",
+     *     name="product_id",
+     *     in="query",
+     *     @OA\Schema(
+     *       type="integer"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     description="返回所有单品 1是 2否",
+     *     name="all",
+     *     in="query",
+     *     @OA\Schema(
+     *       type="integer",
+     *       default=2
+     *     )
+     *   ),
      *   @OA\Response(
      *     response=200,
      *     description="商品详情结构",
      *     @OA\MediaType(
      *         mediaType="application/json",
-     *         @OA\Schema(ref="#/components/schemas/goodsDetal"),
+     *         @OA\Schema(ref="#/components/schemas/goodsDetail"),
      *     ),
      *   ),
      * )
      */
     public function actionDetail()
     {
-        $goods = Goods::goodsDetal(Yii::$app->request->get('id'),Yii::$app->request->get('product_id'));
+        $goods = Goods::goodsDetail(Yii::$app->request->get('id'),Yii::$app->request->get('product_id'),Yii::$app->request->get('all'));
         if (!$goods) Tools::exceptionBreak(Yii::t('base',40001));
         return $this->success($goods);
     }
