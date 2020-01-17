@@ -398,7 +398,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
     {
         $goods = Goods::find()
             ->with(['productItems', 'labelItems', 'brandItem', 'imageItems', 'videoItem'])
-            ->select(['id','type', 'brand_id', 'name', 'brief', 'content', 'params', 'comments_count', 'view_count', 'comments_count','video','image_id', 'stock_unit', 'weight_unit', 'volume_unit'])
+            ->select(['id','type', 'type_id', 'brand_id', 'name', 'brief', 'content', 'params', 'comments_count', 'view_count', 'comments_count','video','image_id', 'stock_unit', 'weight_unit', 'volume_unit'])
             ->where(['id'=>$goods_id, ])
             ->one();
         if (empty($goods)) return null;
@@ -417,7 +417,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
             $data['specs'] = [];
         }
         $data = array_merge($goods->toArray(), $data);
-        $data['params'] = json_decode($data['params'],true);
+        $data['params'] = self::getParams($goods->type_id);
         $data['labelItems'] = $goods->labelItems;
         $data['brandItem'] = $goods->brandItem;
         $data['videoItem'] = $goods->videoItem ? Tools::format_array($goods->videoItem, ['file_url'=>['implode',['',[Config::instance()->web_url,'###']],'array']]) : (object)[];
@@ -436,7 +436,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
         $data['imageItems'] = array_values($imageItems);
         $data['content'] = str_replace('src="file', 'src="' . Config::instance()->web_url . 'file', $data['content']);
         if ($all == 1) {
-            $data['product_list'] = Product::find()->select(['id', 'price', 'mktprice'])->where(['goods_id' => $goods_id])->all();
+            $data['product_list'] = $goods->productItems;
         }
         return $data;
     }

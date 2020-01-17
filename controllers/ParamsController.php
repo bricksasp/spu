@@ -65,9 +65,9 @@ class ParamsController extends BaseController
      * @return mixed
      * @throws HttpException if the model cannot be found
      */
-    public function actionView()
+    public function actionView($id)
     {
-        $data = Tools::format_array($this->findModel(Yii::$app->request->get('id')),['value'=>['json_decode',['###',true]]]);
+        $data = Tools::format_array($this->findModel($id),['value'=>['json_decode',['###',true]]]);
         return $this->success($data);
     }
 
