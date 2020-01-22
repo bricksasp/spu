@@ -173,9 +173,16 @@ class GoodsController extends BaseController
      *     description="商品id",
      *     name="id",
      *     in="query",
-     *     required=true,
      *     @OA\Schema(
      *       type="integer"
+     *     )
+     *   ),
+     *   @OA\Parameter(
+     *     description="商品编号(id优先)",
+     *     name="gn",
+     *     in="query",
+     *     @OA\Schema(
+     *       type="string"
      *     )
      *   ),
      *   @OA\Parameter(
@@ -207,8 +214,13 @@ class GoodsController extends BaseController
      */
     public function actionDetail()
     {
-        $goods = Goods::goodsDetail(Yii::$app->request->get('id'),Yii::$app->request->get('product_id'),Yii::$app->request->get('all'));
-        if (!$goods) Tools::exceptionBreak(Yii::t('base',40001));
+        $id = Yii::$app->request->get('id');
+        if ($id) {
+            $map['id'] = $id;
+        }else{
+            $map['gn'] = Yii::$app->request->get('gn');
+        }
+        $goods = Goods::goodsDetail($map,Yii::$app->request->get('product_id'),Yii::$app->request->get('all'));
         return $this->success($goods);
     }
 

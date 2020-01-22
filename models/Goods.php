@@ -394,14 +394,14 @@ class Goods extends \bricksasp\base\BaseActiveRecord
      *  @OA\Property( property="specs", description="商品 属性名称-值", ref="#/components/schemas/specs"),
      * )
      */
-    public static function goodsDetail($goods_id,$product_id=0, $all=2)
+    public static function goodsDetail($map,$product_id=0, $all=2)
     {
         $goods = Goods::find()
             ->with(['productItems', 'labelItems', 'brandItem', 'imageItems', 'videoItem'])
             ->select(['id','type', 'type_id', 'brand_id', 'name', 'brief', 'content', 'params', 'comments_count', 'view_count', 'comments_count','video','image_id', 'stock_unit', 'weight_unit', 'volume_unit'])
-            ->where(['id'=>$goods_id, ])
+            ->where($map)
             ->one();
-        if (empty($goods)) return null;
+        if (!$goods) Tools::exceptionBreak(Yii::t('base',40001));
 
         if ($goods->type == self::SPEC_PRODUCT) {
             if ($product_id) {
