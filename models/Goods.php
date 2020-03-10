@@ -364,7 +364,7 @@ class Goods extends \bricksasp\base\BaseActiveRecord
         $item_parmas = Type::find()->with(['paramsItems'])->where(['id'=> $type_id])->one();
         $output = [];
         foreach ($item_parmas->paramsItems as $v) {
-            $output[$v['name']] = json_decode($v['value'],true);
+            $output[Tools::zhPinYin($v['name'])] = json_decode($v['value'],true);
         }
         return $output;
     }
