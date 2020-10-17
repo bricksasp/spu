@@ -101,14 +101,10 @@ class CategoryController extends BaseController
             $map = ['!=', 'id', (int)$id];
         }
         $query = Category::find($this->dataOwnerUid())->select(['id', 'parent_id', 'name', 'image_id']);
-        if ($this->request_entrance == Token::TOKEN_TYPE_BACKEND) {
-            $data = $query->all();
-        }else{
-            $data = $query->with(['image'])->andWhere($map)->all();
-            foreach ($data as $key => $item) {
-                $data[$key] = $item->toArray();
-                $data[$key]['image'] = $item->image ? Tools::format_array($item->image,['file_url'=>['implode',['',[\bricksasp\base\Config::instance()->web_url,'###']],'array']]) : '';
-            }
+        $data = $query->with(['image'])->andWhere($map)->all();
+        foreach ($data as $key => $item) {
+            $data[$key] = $item->toArray();
+            $data[$key]['image'] = $item->image ? Tools::format_array($item->image,['file_url'=>['implode',['',[\bricksasp\base\Config::instance()->web_url,'###']],'array']]) : '';
         }
 
         $tree = Tools::build_tree($data);
