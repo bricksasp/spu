@@ -125,7 +125,7 @@ class CategoryController extends BaseController
             $data['parent_id'] = end($data['parent_id']);
         }
         if ($model->load($data) && $model->save()) {
-            return $this->success();
+            return $this->success($model);
         }
 
         return $this->fail($model->errors);
@@ -162,7 +162,9 @@ class CategoryController extends BaseController
      */
     public function actionDelete()
     {
-        return $this->findModel(Yii::$app->request->post('id'))->delete() !== false ? $this->success() : $this->fail();
+        $model = $this->findModel(Yii::$app->request->post('id'));
+        $this->deleteChildren($model->id);
+        return $model->delete() !== false ? $this->success() : $this->fail();
     }
 
     /**
@@ -179,5 +181,16 @@ class CategoryController extends BaseController
         }
 
         throw new HttpException(200,Yii::t('base',40001));
+    }
+
+    public function deleteChildren($id)
+    {
+        $children = Category::find()->where(['parent_id'=>$id])->asArray()->all();
+        if ($children) {
+            $ids = array_column($children,'id');
+            Category::deleteAll(['id'=>$ids]);
+            $this->deleteChildren($ids);
+        }
+        return true;
     }
 }
